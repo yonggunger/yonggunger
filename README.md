@@ -11,3 +11,12 @@
   local DB(sqlite3) 에 데이터 저장한다.
 
 3. 화이팅
+
+### 하악하악 
+
+실행법 : 
+
+~~~
+npm install
+node index.js 
+~~~
