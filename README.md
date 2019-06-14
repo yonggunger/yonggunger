@@ -14,9 +14,11 @@
 
 ### 하악하악 
 
-실행법 : 
+실행법 : live-server ( https://github.com/tapio/live-server )
 
 ~~~
 npm install
 node index.js 
 ~~~
+
+http://localhost:8181
