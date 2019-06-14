@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Calendar</title>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<style type="text/css">
+.cal_top{
+    text-align: center;
+    font-size: 30px;
+}
+.cal{
+    text-align: center;    
+}
+
+.Timegrid{
+    text-align: center; 
+}
+table.calendar{
+    border: 1px solid black;
+    display: inline-table;
+    text-align: left;
+}
+table.calendar td{
+    vertical-align: top;
+    border: 1px solid skyblue;
+    width: auto;
+}
+table.TimeGrid{
+    border: 1px solid black;
+    display: inline-table;
+    text-align: left;
+}
+table.TimeGrid th{
+    vertical-align: top;   
+    border: 1px solid skyblue;
+    width: auto;
+}
+table.TimeGrid td{
+    vertical-align: top;   
+    border: 1px solid skyblue;
+    width: auto;
+    background-color: black;
+}
+
+
+
+
+
+</style>
+</head>
+<body>
+    <div class="cal_top">
+        <a href="#" id="movePrevMonth"><span id="prevMonth" class="cal_tit">&lt;</span></a>
+        <span id="cal_top_year"></span>
+        <span id="cal_top_month"></span>
+        <a href="#" id="moveNextMonth"><span id="nextMonth" class="cal_tit">&gt;</span></a>
+    </div>
+    <div id="cal_tab" class="cal">
+    </div>
+
+  <div id="time_tab" class="TimeGrid">
+    </div>
+ 
+<script type="text/javascript">
+    var today = null;
+    var year = null;
+    var month = null;
+    var firstDay = null;
+    var lastDay = null;
+    var $tdDay = null;
+    var $tdSche = null;
+    // var $selectlist = {"yyyy":"","mm":"","room":"","name":"","content":"","time":[]};
+ 
+    $(document).ready(function() {
+        drawCalendar();
+        initDate();
+        drawDays();
+        $("#movePrevMonth").on("click", function(){movePrevMonth();});
+        $("#moveNextMonth").on("click", function(){moveNextMonth();});
+       
+    });
+    
+    //calendar 그리기
+    function drawCalendar(){
+        var setTableHTML = "";
+        setTableHTML+='<table class="calendar">';
+        setTableHTML+='<tr><th>SUN</th><th>MON</th><th>TUE</th><th>WED</th><th>THU</th><th>FRI</th><th>SAT</th></tr>';
+        for(var i=0;i<6;i++){
+            setTableHTML+='<tr height="100">';
+            for(var j=0;j<7;j++){
+                setTableHTML+='<td style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap" onclick="getGridofDay()">';
+                setTableHTML+='    <div class="cal-day"></div>';
+                setTableHTML+='    <div class="cal-schedule"></div>';
+                setTableHTML+='</td>';
+            }
+            setTableHTML+='</tr>';
+        }
+        setTableHTML+='</table>';
+        $("#cal_tab").html(setTableHTML);
+    }
+
+
+    // function haak(obj) {
+    //     var $o = $(obj);
+    //     var tmp = $o.find("#time_tab > table > tbody > tr:nth-child(4) > td:nth-child(5)").; 
+    //     if( tmp === '') return; 
+    //     //console.log($o);
+    //     alert(tmp);
+    // }
+
+    
+    //날짜 초기화
+    function initDate(){
+        $tdDay = $("td div.cal-day")
+        $tdSche = $("td div.cal-schedule")
+        dayCount = 0;
+        today = new Date();
+        year = today.getFullYear();
+        month = today.getMonth()+1;
+        firstDay = new Date(year,month-1,1);
+        lastDay = new Date(year,month,0);
+    }
+    
+    //calendar 날짜표시
+    function drawDays(){
+        $("#cal_top_year").text(year);
+        $("#cal_top_month").text(month);
+        for(var i=firstDay.getDay();i<firstDay.getDay()+lastDay.getDate();i++){
+            $tdDay.eq(i).text(++dayCount);
+
+        }
+        for(var i=0;i<42;i+=7){
+            $tdDay.eq(i).css("color","red");
+        }
+        for(var i=6;i<42;i+=7){
+            $tdDay.eq(i).css("color","blue");
+        }
+        
+    }
+
+    //  function drawTime(){
+    //     $("#cal_top_year").text(year);
+    //     $("#cal_top_month").text(month);
+    //     for(var i=firstDay.getDay();i<firstDay.getDay()+lastDay.getDate();i++){
+    //         $tdDay.eq(i).text(++dayCount);
+
+    //     }
+    //     for(var i=0;i<42;i+=7){
+    //         $tdDay.eq(i).css("color","red");
+    //     }
+    //     for(var i=6;i<42;i+=7){
+    //         $tdDay.eq(i).css("color","blue");
+    //     }
+        
+    // }
+
+
+ 
+    //calendar 월 이동
+    function movePrevMonth(){
+        month--;
+        if(month<=0){
+            month=12;
+            year--;
+        }
+        if(month<10){
+            month=String("0"+month);
+        }
+        getNewInfo();
+        }
+    
+    function moveNextMonth(){
+        month++;
+        if(month>12){
+            month=1;
+            year++;
+        }
+        if(month<10){
+            month=String("0"+month);
+        }
+        getNewInfo();
+    }
+
+    
+    function getNewInfo(){
+        for(var i=0;i<42;i++){
+            $tdDay.eq(i).text("");
+        }
+        dayCount=0;
+        firstDay = new Date(year,month-1,1);
+        lastDay = new Date(year,month,0);
+        drawDays();
+    }
+
+    function timeselect(self){
+        var target = $("td");//document.querySelector('td');//
+        target.style.backgroundColor ='white';
+    
+    }
+
+    //회의실 헤더 그리기
+    function getGridofDay(){
+
+       
+        var setGRIDHTML = "";
+        setGRIDHTML+='<table class="TimeGrid">';
+ 
+        // setGRIDHTML+='<div class="zone">회의실</div><div class="zone">08:00</div><div class="zone">09:00</div><div class="zone">10:00</div><div class="zone">11:00</div><div class="zone">12:00</div><div class="zone">13:00</div><div class="zone">14:00</div><div class="zone">15:00</div><div class="zone">16:00</div>';
+   
+        setGRIDHTML+='<tr style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;"><th>회의실</th><th>08:00</th><th>09:00</th><th>10:00</th><th>11:00</th><th>12:00</th><th>13:00</th><th>14:00</th><th>15:00</th><th>16:00</th><th>17:00</th></tr>';
+        // for(var i=0;i<10;i++){
+        //     setGRIDHTML+='<tr height="30">';
+        //     for(var j=0;j<11;j++){
+        //         setGRIDHTML+='<td style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;" value="white" onclick="timeselect(this);">';
+        //         setGRIDHTML+='    <div class="reserv-name"></div>';
+        //         setGRIDHTML+='    <div class="reserv-cont" style="backgroundColor:"black";" ></div>';
+        //         setGRIDHTML+='</td>';
+        //     }
+        //     setGRIDHTML+='</tr>';
+        // }
+       
+          
+         for(var i=0;i<8;i++){
+            setGRIDHTML+='<tr height="30">';
+            for(var j=0;j<11;j++){
+                setGRIDHTML+='<td style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;" value="white" onclick="timeselect(this);">';
+                setGRIDHTML+='    <div class="reserv-name"></div>';
+                setGRIDHTML+='    <div class="reserv-cont"></div>';
+                setGRIDHTML+='</td>';
+            }
+            setGRIDHTML+='</tr>';
+        }
+             setGRIDHTML+='</table>';
+        $("#time_tab").html(setGRIDHTML);
+    }
+  
+    //현재 시간표
+    // function getGridofDay2(){
+    //     var setGRID2HTML = "";
+    //     setGRID2HTML+='<table class="TimeGrid2">';
+    //      for(var i=0;i<8;i++){
+    //         setGRID2HTML+='<tr height="30">';
+    //         for(var j=0;j<11;j++){
+    //             setGRID2HTML+='<td style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;" value="white" onclick="timeselect(this);">';
+    //             setGRID2HTML+='    <div class="reserv-name"></div>';
+    //             setGRID2HTML+='    <div class="reserv-cont"></div>';
+    //             setGRID2HTML+='</td>';
+    //         }
+    //         setGRID2HTML+='</tr>';
+    //     }
+    //          setGRID2HTML+='</table>';
+    //     $("#time_tab2").html(setGRID2HTML);
+    
+        
+    // }
+
+</script>
+</body>
+</html>
